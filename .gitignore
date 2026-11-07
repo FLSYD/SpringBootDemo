@@ -1,0 +1,43 @@
+HELP.md
+target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+data/
+
+### Test ###
+src/test/
+### VS Code ###
+.vscode/
+.codex-handoffs/
+README.md
+
+# 多环境配置练习
+/src/main/resources/application-dev.properties
+/src/main/resources/application-pro.properties
+/src/main/resources/application-test.properties
+
+# 统一使用 application.properties
+/src/main/resources/application.yaml

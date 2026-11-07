@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="班级管理">
+    <title>班级管理</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23263445'/%3E%3Cpath d='M11 12h7l2 3 2-3h7v17h-7l-2 2-2-2h-7z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="clazz.css">
+    <link rel="stylesheet" href="auth.css">
+    <script src="auth.js" defer></script>
+    <script src="clazz.js" defer></script>
+</head>
+<body>
+<div id="session-screen" class="session-screen" role="status" aria-live="polite">
+    <div id="session-spinner" class="session-spinner" aria-hidden="true"></div>
+    <h1>学习管理</h1>
+    <p id="session-message">正在验证登录状态…</p>
+    <div id="session-actions" class="session-actions" hidden>
+        <button id="session-retry" class="button button-primary" type="button">重试</button>
+        <a id="session-login" href="login.html">返回登录</a>
+    </div>
+</div>
+<div id="workspace" class="app-shell" hidden>
+    <aside class="sidebar" aria-label="主导航">
+        <p class="sidebar-title"><span class="brand-mark" aria-hidden="true">学</span>学习管理</p>
+        <nav class="sidebar-nav">
+            <a class="nav-item is-active" href="index.html" aria-current="page">班级管理</a>
+        </nav>
+        <p class="sidebar-footer">管理每一个班级<br>专注每一天的学习</p>
+    </aside>
+
+    <main class="main-content">
+        <header class="workspace-header">
+            <span class="workspace-label">班级工作台</span>
+            <div class="account-actions">
+                <button id="profile-button" class="account-button" type="button" aria-label="查看当前用户信息">
+                    <span id="account-avatar" class="account-avatar" aria-hidden="true"></span>
+                    <span class="account-caption"><span id="account-name"></span><small>查看个人信息</small></span>
+                </button>
+                <button id="logout-button" class="button button-secondary logout-button" type="button">退出登录</button>
+            </div>
+        </header>
+        <div class="breadcrumb" aria-label="面包屑">
+            <span>首页</span>
+            <span class="breadcrumb-separator" aria-hidden="true">/</span>
+            <span aria-current="page">班级管理</span>
+        </div>
+
+        <section class="content" aria-labelledby="page-title">
+            <div class="page-heading">
+                <h1 id="page-title">班级管理</h1>
+                <p>维护班级名称与教师编号</p>
+            </div>
+
+            <div class="toolbar">
+                <div class="toolbar-actions">
+                    <button id="add-button" class="button button-primary" type="button">新增班级</button>
+                    <button id="refresh-button" class="button button-secondary" type="button">刷新</button>
+                </div>
+
+                <form id="search-form" class="search-form" role="search">
+                    <label class="field-inline" for="search-teacher">
+                        <span>教师编号</span>
+                        <input id="search-teacher" name="teacherId" type="number" min="1" step="1"
+                               inputmode="numeric" placeholder="如 1">
+                    </label>
+                    <label class="field-inline search-name" for="search-cname">
+                        <span>班级名称</span>
+                        <input id="search-cname" name="cname" type="search" maxlength="20"
+                               placeholder="输入名称片段">
+                    </label>
+                    <button class="button button-search" type="submit">搜索</button>
+                    <button id="clear-button" class="button button-plain" type="button">清空</button>
+                </form>
+            </div>
+
+            <div id="page-notice" class="page-notice" role="status" aria-live="polite" hidden></div>
+
+            <div class="table-panel">
+                <div class="table-scroll">
+                    <table>
+                        <caption class="sr-only">班级列表</caption>
+                        <thead>
+                        <tr>
+                            <th scope="col">班级编号</th>
+                            <th scope="col">班级名称</th>
+                            <th scope="col">教师编号</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="clazz-table-body">
+                        <tr>
+                            <td class="table-message" colspan="4">正在加载班级数据…</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <span id="result-count" aria-live="polite">共 0 个班级</span>
+                    <div class="pagination-controls">
+                        <label class="page-size-control" for="page-size">
+                            <span>每页</span>
+                            <select id="page-size" name="pageSize">
+                                <option value="5" selected>5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                            </select>
+                            <span>条</span>
+                        </label>
+                        <nav id="pagination-nav" class="pagination" aria-label="班级列表分页">
+                            <button id="previous-page" class="pagination-button" type="button">上一页</button>
+                            <div id="page-numbers" class="page-numbers"></div>
+                            <button id="next-page" class="pagination-button" type="button">下一页</button>
+                            <span id="page-status" class="page-status" aria-live="polite">第 0/0 页</span>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<dialog id="clazz-dialog" class="clazz-dialog" aria-labelledby="dialog-title">
+    <form id="clazz-form" novalidate>
+        <div class="dialog-header">
+            <h2 id="dialog-title">新增班级</h2>
+            <button id="dialog-close-button" class="icon-button" type="button" aria-label="关闭">×</button>
+        </div>
+
+        <div class="dialog-body">
+            <div id="form-message" class="form-message" role="alert" hidden></div>
+
+            <label class="form-field" for="clazz-cid">
+                <span>班级编号</span>
+                <input id="clazz-cid" type="text" readonly>
+            </label>
+
+            <label class="form-field" for="clazz-cname">
+                <span>班级名称 <em aria-hidden="true">*</em></span>
+                <input id="clazz-cname" name="cname" type="text" maxlength="20" required
+                       autocomplete="off" placeholder="最多 20 个字符">
+            </label>
+
+            <label class="form-field" for="clazz-teacher">
+                <span>教师编号</span>
+                <input id="clazz-teacher" name="teacherId" type="number" min="1" step="1"
+                       inputmode="numeric" placeholder="可不填">
+                <small>当前可用：1、2</small>
+            </label>
+        </div>
+
+        <div class="dialog-footer">
+            <button id="dialog-cancel-button" class="button button-secondary" type="button">取消</button>
+            <button id="dialog-save-button" class="button button-primary" type="submit">保存</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="profile-dialog" class="clazz-dialog" aria-labelledby="profile-title">
+    <div class="dialog-header">
+        <h2 id="profile-title">个人信息</h2>
+        <button id="profile-close" class="icon-button" type="button" aria-label="关闭个人信息">×</button>
+    </div>
+    <div class="dialog-body">
+        <dl class="profile-grid">
+            <div><dt>用户编号</dt><dd id="profile-id"></dd></div>
+            <div><dt>用户名</dt><dd id="profile-username"></dd></div>
+            <div><dt>姓名</dt><dd id="profile-name"></dd></div>
+            <div><dt>年龄</dt><dd id="profile-age"></dd></div>
+        </dl>
+    </div>
+</dialog>
+
+<dialog id="class-detail-dialog" class="clazz-dialog class-detail-dialog" aria-labelledby="class-detail-title">
+    <div class="dialog-header">
+        <h2 id="class-detail-title">班级详情</h2>
+        <button id="class-detail-close" class="icon-button" type="button" aria-label="关闭班级详情">×</button>
+    </div>
+    <div class="dialog-body">
+        <p id="class-detail-message" role="status" aria-live="polite">正在加载班级信息…</p>
+        <dl id="class-detail-info" class="profile-grid" hidden>
+            <div><dt>班级编号</dt><dd id="detail-cid"></dd></div>
+            <div><dt>班级名称</dt><dd id="detail-cname"></dd></div>
+            <div><dt>教师编号</dt><dd id="detail-teacher"></dd></div>
+            <div><dt>学生人数</dt><dd id="detail-count"></dd></div>
+        </dl>
+        <div class="table-scroll">
+            <table id="students-table">
+                <caption class="sr-only">当前班级的学生</caption>
+                <thead><tr><th scope="col">学生编号</th><th scope="col">姓名</th><th scope="col">班级编号</th></tr></thead>
+                <tbody id="detail-students"></tbody>
+            </table>
+        </div>
+        <button id="class-detail-retry" class="button button-secondary" type="button" hidden>重新加载详情</button>
+    </div>
+</dialog>
+
+<noscript>此页面需要启用 JavaScript 才能加载班级数据。</noscript>
+</body>
+</html>

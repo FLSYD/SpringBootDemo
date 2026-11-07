@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="登录学习管理，维护你的班级信息。">
+    <title>登录 · 学习管理</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23263445'/%3E%3Cpath d='M11 12h7l2 3 2-3h7v17h-7l-2 2-2-2h-7z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="clazz.css">
+    <link rel="stylesheet" href="auth.css">
+    <script src="auth.js" defer></script>
+    <script src="login.js" defer></script>
+</head>
+<body class="login-page">
+<main class="login-layout">
+    <section class="login-intro" aria-labelledby="intro-title">
+        <a class="login-brand" href="login.html" aria-label="学习管理登录页">
+            <span class="brand-mark" aria-hidden="true">学</span>
+            <span>学习管理</span>
+        </a>
+        <div class="intro-copy">
+            <span class="intro-eyebrow">让每一天的管理更有条理</span>
+            <h1 id="intro-title">班级与学习，<br>从这里开始。</h1>
+            <p>把班级信息整理好，<br>把更多时间留给学习本身。</p>
+            <div class="intro-features">
+                <span><i aria-hidden="true">01</i> 统一维护班级信息</span>
+                <span><i aria-hidden="true">02</i> 快速搜索与分页浏览</span>
+                <span><i aria-hidden="true">03</i> 随时查看当前账户</span>
+            </div>
+        </div>
+        <span class="intro-footer">学习管理 · 班级工作台</span>
+        <div class="intro-decoration" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
+
+    <section class="login-content" aria-labelledby="login-title">
+        <div class="login-card">
+            <span class="login-kicker">欢迎使用学习管理</span>
+            <h2 id="login-title">欢迎回来</h2>
+            <p class="login-description">登录你的账户，继续管理班级。</p>
+            <div id="login-notice" class="login-notice" role="status" aria-live="polite" hidden></div>
+            <form id="login-form">
+                <label class="form-field" for="login-username">
+                    <span>用户名</span>
+                    <input id="login-username" name="username" type="text" required maxlength="50"
+                           autocomplete="username" autocapitalize="none" spellcheck="false"
+                           placeholder="请输入用户名">
+                </label>
+                <div class="form-field">
+                    <label for="login-password">密码</label>
+                    <div class="password-field">
+                        <input id="login-password" name="password" type="password" required
+                               autocomplete="current-password" placeholder="请输入密码">
+                        <button id="password-toggle" type="button" aria-label="显示密码" aria-pressed="false">显示</button>
+                    </div>
+                </div>
+                <div id="login-error" class="form-message" role="alert" hidden></div>
+                <button id="login-submit" class="button button-primary login-submit" type="submit">登录并进入</button>
+            </form>
+            <p class="login-help">请使用已有账户登录。</p>
+        </div>
+        <span class="login-footer">专注学习，有序管理</span>
+    </section>
+</main>
+<noscript>此页面需要启用 JavaScript 才能登录。</noscript>
+</body>
+</html>

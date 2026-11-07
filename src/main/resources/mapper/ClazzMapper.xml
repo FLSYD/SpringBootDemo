@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace:命令空间。现在可以随便起名。
+后续需要和dao的名称一致。
+-->
+<mapper namespace="com.example.demo.dao.ClazzDao">
+  <!--根据id查询语句
+  #{id}:表示占位符？。  mybatis会自动给该占位符赋值。
+  resultType:结果类型。[查询的结果映射为的类型]
+  id必须和dao接口中方法名一致。
+  -->
+  <resultMap id="ClazzResultMap" type="com.example.demo.entity.Clazz">
+    <id property="cid" column="c_id"/>
+    <result property="cname" column="c_name"/>
+    <result property="teacherId" column="teacher_id"/>
+    <collection property="students" ofType="com.example.demo.entity.Student">
+      <id property="sid" column="s_id"/>
+      <result property="sname" column="s_name"/>
+      <result property="classId" column="class_id"/>
+    </collection>
+  </resultMap>
+    <select id="getById" resultMap="ClazzResultMap">
+      select c_id, c_name, teacher_id
+      from clazz
+      where c_id = #{cid}
+    </select>
+    <select id="getByIdWithStudents" resultMap="ClazzResultMap">
+        select * from clazz c inner join teacher t on c.teacher_id = t.t_id inner join student s on c.c_id = s.class_id where c.c_id = #{cid}
+    </select>
+    <insert id="add" useGeneratedKeys="true" keyProperty="cid">
+      insert into clazz (c_name, teacher_id)
+      values (#{cname}, #{teacherId})
+    </insert>
+    <update id="update">
+      update clazz
+      set c_name = #{cname}, teacher_id = #{teacherId}
+      where c_id = #{cid}
+    </update>
+    <delete id="delete">
+      delete from clazz
+      where c_id = #{cid}
+        and not exists (
+          select 1 from student where class_id = #{cid}
+        )
+    </delete>
+    <select id="queryByCondition" resultMap="ClazzResultMap">
+      select * from clazz
+      <where>
+        <if test="clazz.cname != null and clazz.cname != ''">
+          and c_name like concat('%', #{clazz.cname}, '%')
+        </if>
+        <if test="clazz.teacherId != null and clazz.teacherId != 0">
+          and teacher_id = #{clazz.teacherId}
+        </if>
+      </where>
+      order by c_id
+    </select>
+</mapper>
